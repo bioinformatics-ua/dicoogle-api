@@ -1,3 +1,4 @@
 [submodule "dicoogle"]
 	path = dicoogle
 	url = https://github.com/bioinformatics-ua/dicoogle
+	ignore = dirty
