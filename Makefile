@@ -54,14 +54,14 @@ all:
 
 javadoc:
 	if [ $(words $(MAKECMDGOALS)) -lt 2 ] ; then \
-        make javadoc-v2.3.1 javadoc-v2.4.0 javadoc-v2.5.0 javadoc-dev javadoc-master;\
+        make javadoc-v2.3.1 javadoc-v2.4.0 javadoc-v2.5.0 javadoc-vdev javadoc-vmaster;\
 	else \
 		make javadoc-v$(DICOOGLE_TARGET) ; \
 	fi
 
 webapi:
 	if [ $(words $(MAKECMDGOALS)) -lt 2 ] ; then \
-        make webapi-dev;\
+        make webapi-vdev;\
 	else \
 		make webapi-v$(DICOOGLE_TARGET) ; \
 	fi
