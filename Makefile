@@ -31,7 +31,6 @@ JAVADOC_DIR = $(DOCS_DIR)/javadoc
 WEBAPI_DIR = $(DOCS_DIR)/webapi
 
 
-# If target matches javadoc, get version. It not defined, generate LATEST
 ifeq (javadoc,$(firstword $(MAKECMDGOALS)))
   # use the rest as arguments for "run"
   DICOOGLE_TARGET := $(wordlist 2,2,$(MAKECMDGOALS))
@@ -39,32 +38,56 @@ ifeq (javadoc,$(firstword $(MAKECMDGOALS)))
   $(eval $(DICOOGLE_TARGET):;@:)
 endif
 
+ifeq (webapi,$(firstword $(MAKECMDGOALS)))
+  # use the rest as arguments for "run"
+  DICOOGLE_TARGET := $(wordlist 2,2,$(MAKECMDGOALS))
+  # ...and turn them into do-nothing targets
+  $(eval $(DICOOGLE_TARGET):;@:)
+endif
+
+
 default: all 
 
 all:
 	make javadoc
+	make webapi
 
 javadoc:
 	if [ $(words $(MAKECMDGOALS)) -lt 2 ] ; then \
-        make v2.3.1 v2.4.0 v2.5.0 dev master;\
+        make javadoc-v2.3.1 javadoc-v2.4.0 javadoc-v2.5.0 javadoc-dev javadoc-master;\
 	else \
-		make v$(DICOOGLE_TARGET) ; \
+		make javadoc-v$(DICOOGLE_TARGET) ; \
 	fi
 
-v2.3.1:
+webapi:
+	if [ $(words $(MAKECMDGOALS)) -lt 2 ] ; then \
+        make webapi-dev;\
+	else \
+		make webapi-v$(DICOOGLE_TARGET) ; \
+	fi
+
+javadoc-v2.3.1:
 	sh scripts/build_javadoc.sh -d 2.3.1 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.3.1
 
-v2.4.0:
+javadoc-v2.4.0:
 	sh scripts/build_javadoc.sh -d 2.4.0 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.4.0
 
-v2.5.0: 
+javadoc-v2.5.0: 
 	sh scripts/build_javadoc.sh -d 2.5.0 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.5.0
 
-dev:
+javadoc-vdev:
 	sh scripts/build_javadoc.sh -d dev -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/dev
 
-master:
+javadoc-vmaster:
 	sh scripts/build_javadoc.sh -d master -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/master
+
+
+webapi-vdev:
+	sh scripts/build_webapi.sh -d dev -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/dev
+
+webapi-vmaster:
+	sh scripts/build_webapi.sh -d master -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/master
+
 
 clean:
     # Remove all of the documentation
