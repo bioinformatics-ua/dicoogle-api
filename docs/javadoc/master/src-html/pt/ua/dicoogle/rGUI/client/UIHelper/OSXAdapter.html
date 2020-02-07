@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This file is part of Dicoogle/dicoogle.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> *<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Dicoogle/dicoogle is free software: you can redistribute it and/or modify<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * it under the terms of the GNU General Public License as published by<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * the Free Software Foundation, either version 3 of the License, or<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * (at your option) any later version.<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Dicoogle/dicoogle is distributed in the hope that it will be useful,<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * but WITHOUT ANY WARRANTY; without even the implied warranty of<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * GNU General Public License for more details.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * You should have received a copy of the GNU General Public License<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * along with Dicoogle.  If not, see &lt;http://www.gnu.org/licenses/&gt;.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> */<a name="line.18"></a>
+<span class="sourceLineNo">019</span>/*<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>File: OSXAdapter.java<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>Abstract: Hooks existing preferences/about/quit functionality from an<a name="line.23"></a>
+<span class="sourceLineNo">024</span>    existing Java app into handlers for the Mac OS X application menu.<a name="line.24"></a>
+<span class="sourceLineNo">025</span>    Uses a Proxy object to dynamically implement the <a name="line.25"></a>
+<span class="sourceLineNo">026</span>    com.apple.eawt.ApplicationListener interface and register it with the<a name="line.26"></a>
+<span class="sourceLineNo">027</span>    com.apple.eawt.Application object.  This allows the complete project<a name="line.27"></a>
+<span class="sourceLineNo">028</span>    to be both built and run on any platform without any stubs or <a name="line.28"></a>
+<span class="sourceLineNo">029</span>    placeholders. Useful for developers looking to implement Mac OS X <a name="line.29"></a>
+<span class="sourceLineNo">030</span>    features while supporting multiple platforms with minimal impact.<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                        <a name="line.31"></a>
+<span class="sourceLineNo">032</span>Version: 2.0<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>Disclaimer: IMPORTANT:  This Apple software is supplied to you by <a name="line.34"></a>
+<span class="sourceLineNo">035</span>Apple Inc. ("Apple") in consideration of your agreement to the<a name="line.35"></a>
+<span class="sourceLineNo">036</span>following terms, and your use, installation, modification or<a name="line.36"></a>
+<span class="sourceLineNo">037</span>redistribution of this Apple software constitutes acceptance of these<a name="line.37"></a>
+<span class="sourceLineNo">038</span>terms.  If you do not agree with these terms, please do not use,<a name="line.38"></a>
+<span class="sourceLineNo">039</span>install, modify or redistribute this Apple software.<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>In consideration of your agreement to abide by the following terms, and<a name="line.41"></a>
+<span class="sourceLineNo">042</span>subject to these terms, Apple grants you a personal, non-exclusive<a name="line.42"></a>
+<span class="sourceLineNo">043</span>license, under Apple's copyrights in this original Apple software (the<a name="line.43"></a>
+<span class="sourceLineNo">044</span>"Apple Software"), to use, reproduce, modify and redistribute the Apple<a name="line.44"></a>
+<span class="sourceLineNo">045</span>Software, with or without modifications, in source and/or binary forms;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>provided that if you redistribute the Apple Software in its entirety and<a name="line.46"></a>
+<span class="sourceLineNo">047</span>without modifications, you must retain this notice and the following<a name="line.47"></a>
+<span class="sourceLineNo">048</span>text and disclaimers in all such redistributions of the Apple Software. <a name="line.48"></a>
+<span class="sourceLineNo">049</span>Neither the name, trademarks, service marks or logos of Apple Inc. <a name="line.49"></a>
+<span class="sourceLineNo">050</span>may be used to endorse or promote products derived from the Apple<a name="line.50"></a>
+<span class="sourceLineNo">051</span>Software without specific prior written permission from Apple.  Except<a name="line.51"></a>
+<span class="sourceLineNo">052</span>as expressly stated in this notice, no other rights or licenses, express<a name="line.52"></a>
+<span class="sourceLineNo">053</span>or implied, are granted by Apple herein, including but not limited to<a name="line.53"></a>
+<span class="sourceLineNo">054</span>any patent rights that may be infringed by your derivative works or by<a name="line.54"></a>
+<span class="sourceLineNo">055</span>other works in which the Apple Software may be incorporated.<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>The Apple Software is provided by Apple on an "AS IS" basis.  APPLE<a name="line.57"></a>
+<span class="sourceLineNo">058</span>MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION<a name="line.58"></a>
+<span class="sourceLineNo">059</span>THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS<a name="line.59"></a>
+<span class="sourceLineNo">060</span>FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND<a name="line.60"></a>
+<span class="sourceLineNo">061</span>OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL<a name="line.63"></a>
+<span class="sourceLineNo">064</span>OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF<a name="line.64"></a>
+<span class="sourceLineNo">065</span>SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS<a name="line.65"></a>
+<span class="sourceLineNo">066</span>INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,<a name="line.66"></a>
+<span class="sourceLineNo">067</span>MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED<a name="line.67"></a>
+<span class="sourceLineNo">068</span>AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),<a name="line.68"></a>
+<span class="sourceLineNo">069</span>STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE<a name="line.69"></a>
+<span class="sourceLineNo">070</span>POSSIBILITY OF SUCH DAMAGE.<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>Copyright � 2003-2007 Apple, Inc., All Rights Reserved<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>*/<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>package pt.ua.dicoogle.rGUI.client.UIHelper;<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>import java.lang.reflect.*;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>import java.util.HashMap;<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>@Deprecated<a name="line.81"></a>
+<span class="sourceLineNo">082</span>public class OSXAdapter implements InvocationHandler {<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>    protected Object targetObject;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    protected Method targetMethod;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    protected String proxySignature;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>    <a name="line.87"></a>
+<span class="sourceLineNo">088</span>    static Object macOSXApplication;<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>    // Pass this method an Object and Method equipped to perform application shutdown logic<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    // The method passed should return a boolean stating whether or not the quit should occur<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public static void setQuitHandler(Object target, Method quitHandler) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        setHandler(new OSXAdapter("handleQuit", target, quitHandler));<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    }<a name="line.94"></a>
+<span class="sourceLineNo">095</span>    <a name="line.95"></a>
+<span class="sourceLineNo">096</span>    // Pass this method an Object and Method equipped to display application info<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    // They will be called when the About menu item is selected from the application menu<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    public static void setAboutHandler(Object target, Method aboutHandler) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        boolean enableAboutMenu = (target != null &amp;&amp; aboutHandler != null);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        if (enableAboutMenu) {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>            setHandler(new OSXAdapter("handleAbout", target, aboutHandler));<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        }<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        // If we're setting a handler, enable the About menu item by calling<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        // com.apple.eawt.Application reflectively<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        try {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>            Method enableAboutMethod = macOSXApplication.getClass().getDeclaredMethod("setEnabledAboutMenu", new Class[] { boolean.class });<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            enableAboutMethod.invoke(macOSXApplication, new Object[] { Boolean.valueOf(enableAboutMenu) });<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        } catch (Exception ex) {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            System.err.println("OSXAdapter could not access the About Menu");<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            ex.printStackTrace();<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    <a name="line.113"></a>
+<span class="sourceLineNo">114</span>    // Pass this method an Object and a Method equipped to display application options<a name="line.114"></a>
+<span class="sourceLineNo">115</span>    // They will be called when the Preferences menu item is selected from the application menu<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    public static void setPreferencesHandler(Object target, Method prefsHandler) {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        boolean enablePrefsMenu = (target != null &amp;&amp; prefsHandler != null);<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        if (enablePrefsMenu) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            setHandler(new OSXAdapter("handlePreferences", target, prefsHandler));<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        // If we're setting a handler, enable the Preferences menu item by calling<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        // com.apple.eawt.Application reflectively<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        try {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            Method enablePrefsMethod = macOSXApplication.getClass().getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            enablePrefsMethod.invoke(macOSXApplication, new Object[] { Boolean.valueOf(enablePrefsMenu) });<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        } catch (Exception ex) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            System.err.println("OSXAdapter could not access the About Menu");<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            ex.printStackTrace();<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    }<a name="line.130"></a>
+<span class="sourceLineNo">131</span>    <a name="line.131"></a>
+<span class="sourceLineNo">132</span>    // Pass this method an Object and a Method equipped to handle document events from the Finder<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    // Documents are registered with the Finder via the CFBundleDocumentTypes dictionary in the <a name="line.133"></a>
+<span class="sourceLineNo">134</span>    // application bundle's Info.plist<a name="line.134"></a>
+<span class="sourceLineNo">135</span>    public static void setFileHandler(Object target, Method fileHandler) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        setHandler(new OSXAdapter("handleOpenFile", target, fileHandler) {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            // Override OSXAdapter.callTarget to send information on the<a name="line.137"></a>
+<span class="sourceLineNo">138</span>            // file to be opened<a name="line.138"></a>
+<span class="sourceLineNo">139</span>            public boolean callTarget(Object appleEvent) {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                if (appleEvent != null) {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                    try {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        Method getFilenameMethod = appleEvent.getClass().getDeclaredMethod("getFilename", (Class[])null);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                        String filename = (String) getFilenameMethod.invoke(appleEvent, (Object[])null);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                        this.targetMethod.invoke(this.targetObject, new Object[] { filename });<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                    } catch (Exception ex) {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                        <a name="line.146"></a>
+<span class="sourceLineNo">147</span>                    }<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                return true;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            }<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        });<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    <a name="line.153"></a>
+<span class="sourceLineNo">154</span>    // setHandler creates a Proxy object from the passed OSXAdapter and adds it as an ApplicationListener<a name="line.154"></a>
+<span class="sourceLineNo">155</span>    public static void setHandler(OSXAdapter adapter) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        try {<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            Class applicationClass = Class.forName("com.apple.eawt.Application");<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            if (macOSXApplication == null) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                macOSXApplication = applicationClass.getConstructor((Class[])null).newInstance((Object[])null);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>            }<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            Class applicationListenerClass = Class.forName("com.apple.eawt.ApplicationListener");<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            Method addListenerMethod = applicationClass.getDeclaredMethod("addApplicationListener", new Class[] { applicationListenerClass });<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            // Create a proxy object around this handler that can be reflectively added as an Apple ApplicationListener<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            Object osxAdapterProxy = Proxy.newProxyInstance(OSXAdapter.class.getClassLoader(), new Class[] { applicationListenerClass }, adapter);<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            addListenerMethod.invoke(macOSXApplication, new Object[] { osxAdapterProxy });<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        } catch (ClassNotFoundException cnfe) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            System.err.println("This version of Mac OS X does not support the Apple EAWT.  ApplicationEvent handling has been disabled (" + cnfe + ")");<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        } catch (Exception ex) {  // Likely a NoSuchMethodException or an IllegalAccessException loading/invoking eawt.Application methods<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            System.err.println("Mac OS X Adapter could not talk to EAWT:");<a name="line.169"></a>
+<span class="sourceLineNo">170</span>            ex.printStackTrace();<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        }<a name="line.171"></a>
+<span class="sourceLineNo">172</span>    }<a name="line.172"></a>
+<span class="sourceLineNo">173</span><a name="line.173"></a>
+<span class="sourceLineNo">174</span>    // Each OSXAdapter has the name of the EAWT method it intends to listen for (handleAbout, for example),<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    // the Object that will ultimately perform the task, and the Method to be called on that Object<a name="line.175"></a>
+<span class="sourceLineNo">176</span>    protected OSXAdapter(String proxySignature, Object target, Method handler) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        this.proxySignature = proxySignature;<a name="line.177"></a>
+<span class="sourceLineNo">178</span>        this.targetObject = target;<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        this.targetMethod = handler;<a name="line.179"></a>
+<span class="sourceLineNo">180</span>    }<a name="line.180"></a>
+<span class="sourceLineNo">181</span>    <a name="line.181"></a>
+<span class="sourceLineNo">182</span>    // Override this method to perform any operations on the event <a name="line.182"></a>
+<span class="sourceLineNo">183</span>    // that comes with the various callbacks<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    // See setFileHandler above for an example<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    public boolean callTarget(Object appleEvent) throws InvocationTargetException, IllegalAccessException {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        Object result = targetMethod.invoke(targetObject, (Object[])null);<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        if (result == null) {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>            return true;<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        }<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        return Boolean.valueOf(result.toString()).booleanValue();<a name="line.190"></a>
+<span class="sourceLineNo">191</span>    }<a name="line.191"></a>
+<span class="sourceLineNo">192</span>    <a name="line.192"></a>
+<span class="sourceLineNo">193</span>    // InvocationHandler implementation<a name="line.193"></a>
+<span class="sourceLineNo">194</span>    // This is the entry point for our proxy object; it is called every time an ApplicationListener method is invoked<a name="line.194"></a>
+<span class="sourceLineNo">195</span>    public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        if (isCorrectMethod(method, args)) {<a name="line.196"></a>
+<span class="sourceLineNo">197</span>            boolean handled = callTarget(args[0]);<a name="line.197"></a>
+<span class="sourceLineNo">198</span>            setApplicationEventHandled(args[0], handled);<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        }<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        // All of the ApplicationListener methods are void; return null regardless of what happens<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        return null;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>    }<a name="line.202"></a>
+<span class="sourceLineNo">203</span>    <a name="line.203"></a>
+<span class="sourceLineNo">204</span>    // Compare the method that was called to the intended method when the OSXAdapter instance was created<a name="line.204"></a>
+<span class="sourceLineNo">205</span>    // (e.g. handleAbout, handleQuit, handleOpenFile, etc.)<a name="line.205"></a>
+<span class="sourceLineNo">206</span>    protected boolean isCorrectMethod(Method method, Object[] args) {<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        return (targetMethod != null &amp;&amp; proxySignature.equals(method.getName()) &amp;&amp; args.length == 1);<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    }<a name="line.208"></a>
+<span class="sourceLineNo">209</span>    <a name="line.209"></a>
+<span class="sourceLineNo">210</span>    // It is important to mark the ApplicationEvent as handled and cancel the default behavior<a name="line.210"></a>
+<span class="sourceLineNo">211</span>    // This method checks for a boolean result from the proxy method and sets the event accordingly<a name="line.211"></a>
+<span class="sourceLineNo">212</span>    protected void setApplicationEventHandled(Object event, boolean handled) {<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        if (event != null) {<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            try {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                Method setHandledMethod = event.getClass().getDeclaredMethod("setHandled", new Class[] { boolean.class });<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                // If the target method returns a boolean, use that as a hint<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                setHandledMethod.invoke(event, new Object[] { Boolean.valueOf(handled) });<a name="line.217"></a>
+<span class="sourceLineNo">218</span>            } catch (Exception ex) {<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                System.err.println("OSXAdapter was unable to handle an ApplicationEvent: " + event);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                ex.printStackTrace();<a name="line.220"></a>
+<span class="sourceLineNo">221</span>            }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        }<a name="line.222"></a>
+<span class="sourceLineNo">223</span>    }<a name="line.223"></a>
+<span class="sourceLineNo">224</span>}<a name="line.224"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

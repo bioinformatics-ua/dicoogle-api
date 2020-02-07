@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This file is part of Dicoogle/dicoogle.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> *<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Dicoogle/dicoogle is free software: you can redistribute it and/or modify<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * it under the terms of the GNU General Public License as published by<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * the Free Software Foundation, either version 3 of the License, or<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * (at your option) any later version.<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Dicoogle/dicoogle is distributed in the hope that it will be useful,<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * but WITHOUT ANY WARRANTY; without even the implied warranty of<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * GNU General Public License for more details.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * You should have received a copy of the GNU General Public License<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * along with Dicoogle.  If not, see &lt;http://www.gnu.org/licenses/&gt;.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> */<a name="line.18"></a>
+<span class="sourceLineNo">019</span>package pt.ua.dicoogle.core;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.BufferedWriter;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.io.FileWriter;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.io.IOException;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.io.Serializable;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.ArrayList;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.HashMap;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.Observable;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.Observer;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.concurrent.Semaphore;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.slf4j.LoggerFactory;<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>import pt.ua.dicoogle.plugins.PluginController;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import pt.ua.dicoogle.rGUI.server.controllers.Search;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import pt.ua.dicoogle.sdk.Utils.TaskRequest;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import pt.ua.dicoogle.sdk.Utils.TaskRequestsConstants;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import pt.ua.dicoogle.sdk.datastructs.SearchResult;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import pt.ua.dicoogle.sdk.observables.ListObservableSearch;<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>/**<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * This class is used to export query results to .csv file format with the selected tags<a name="line.42"></a>
+<span class="sourceLineNo">043</span> *<a name="line.43"></a>
+<span class="sourceLineNo">044</span> * @author Samuel da Costa Campos &lt;samuelcampos@ua.pt&gt;<a name="line.44"></a>
+<span class="sourceLineNo">045</span> *<a name="line.45"></a>
+<span class="sourceLineNo">046</span> */<a name="line.46"></a>
+<span class="sourceLineNo">047</span>public class ExportDataSupport extends Observable implements Observer, Serializable {<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private String query;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>    private HashMap&lt;String, Boolean&gt; origin;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    //private boolean network;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    private boolean keywords;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    private ArrayList&lt;String&gt; tags;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    private String filePath;<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>    private static Semaphore semFile = new Semaphore(1, true);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private ListObservableSearch obsAux = null;<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    <a name="line.58"></a>
+<span class="sourceLineNo">059</span>    public ExportDataSupport(String query, HashMap&lt;String, Boolean&gt; origin, boolean keywords, ArrayList&lt;String&gt; tags, String filePath) throws Exception<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    {<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        <a name="line.61"></a>
+<span class="sourceLineNo">062</span>        //System.out.println("Plugins: " + origin);<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        <a name="line.63"></a>
+<span class="sourceLineNo">064</span>        //System.out.println("Entenring...");<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        this.query = query;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        this.origin = origin;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        this.keywords = keywords;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        this.tags = tags;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        this.filePath = filePath;<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>        if(!this.filePath.endsWith(".csv"))<a name="line.71"></a>
+<span class="sourceLineNo">072</span>            this.filePath = this.filePath + ".csv";<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>    }<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>    public void InitiateExport(Observer obs) throws Exception<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        this.addObserver(obs);<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        //this.obsAux = obs;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        //System.out.println("Count observables: "+this.countObservers());<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        //System.out.println("1 - initiateExport");<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        printFirstLine();<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        //System.out.println("2 - initiateExport");<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        //Result2Tree.getInstance().searchToExport(query, keywords, origin, tags, this);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        ISearch search = new Search();<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        obsAux  = search.SearchToExport(query, keywords, origin, tags, this);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        //System.out.println("3 - initiateExport"); <a name="line.87"></a>
+<span class="sourceLineNo">088</span>    }<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>    /**<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * Print the first line of the .csv file<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     *<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * @throws IOException<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * @throws InterruptedException<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     */<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    private void printFirstLine() throws IOException, InterruptedException{<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        StringBuffer st = new StringBuffer();<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        //System.out.println("Write the First Line");<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        for(String tag: tags)<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            st.append(tag).append(';');<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>        st.append('\n');<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        //System.out.println("Count observables: "+this.countObservers());<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        printToFile(st);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    }<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>    private void printLines(ArrayList&lt;SearchResult&gt; results) throws InterruptedException, IOException{<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        //System.out.println("Count observables: "+this.countObservers());<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        StringBuffer st = new StringBuffer();<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        long i = 0 ; <a name="line.110"></a>
+<span class="sourceLineNo">111</span>        //System.out.println("Calling");<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        for(SearchResult result : results){<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            <a name="line.113"></a>
+<span class="sourceLineNo">114</span>            //System.out.println("Export: " + i );<a name="line.114"></a>
+<span class="sourceLineNo">115</span>            //System.out.println("Count observables: "+this.countObservers());<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            <a name="line.116"></a>
+<span class="sourceLineNo">117</span>            HashMap&lt;String, Object&gt; extraFields = result.getExtraData();<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            <a name="line.118"></a>
+<span class="sourceLineNo">119</span>            for(String tag: tags){<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                Object temp1 = extraFields.get(tag);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                String temp = null;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                if(temp1 instanceof String)<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                    temp = (String) temp1;<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                <a name="line.124"></a>
+<span class="sourceLineNo">125</span>                if(temp == null)<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                    st.append(';');<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                else{<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                    temp = temp.replace("\n", "");<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                    temp = temp.replace(";", ",");<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                    st.append(temp).append(';');<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                }<a name="line.133"></a>
+<span class="sourceLineNo">134</span>            }<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            st.append('\n');<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            if (i%1000==0)<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                BufferedWriter out = new BufferedWriter(new FileWriter(filePath, true));<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                out.write(st.toString());<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                out.close();<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                st = new StringBuffer();<a name="line.141"></a>
+<span class="sourceLineNo">142</span>            }<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            i++;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>            <a name="line.144"></a>
+<span class="sourceLineNo">145</span>        }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        //System.out.println("Out of loop");<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        // Print last buffer (that is not yet printed)<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        printToFile(st);<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>        // only intended to notify the observers of the fist time<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        //System.out.println("Calling observables: "+this.countObservers());<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        if(this.countObservers() &gt; 0)<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>            //System.out.println("Calling observables. There is one, at least.");<a name="line.154"></a>
+<span class="sourceLineNo">155</span>            this.setChanged();<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            <a name="line.156"></a>
+<span class="sourceLineNo">157</span>            if (obsAux!=null)<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                LoggerFactory.getLogger(ExportDataSupport.class).error("obsAux " + obsAux.isFinish() );<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                this.notifyObservers(obsAux.isFinish());<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            }<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            else<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                LoggerFactory.getLogger(ExportDataSupport.class).error("not obsAux " );<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                this.notifyObservers(false);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            }<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            //this.deleteObservers();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>    }<a name="line.169"></a>
+<span class="sourceLineNo">170</span><a name="line.170"></a>
+<span class="sourceLineNo">171</span>    private void printToFile(StringBuffer st) throws InterruptedException, IOException{<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        <a name="line.172"></a>
+<span class="sourceLineNo">173</span>        BufferedWriter out = new BufferedWriter(new FileWriter(filePath, true));<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        out.write(st.toString());<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        out.close();<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>    }<a name="line.177"></a>
+<span class="sourceLineNo">178</span><a name="line.178"></a>
+<span class="sourceLineNo">179</span>    private int count = 0 ; <a name="line.179"></a>
+<span class="sourceLineNo">180</span>    <a name="line.180"></a>
+<span class="sourceLineNo">181</span>    @Override<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    public synchronized  void update(Observable o, Object arg) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        count++ ;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        <a name="line.184"></a>
+<span class="sourceLineNo">185</span>        if (obsAux==null)<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        {<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>            obsAux = ((ListObservableSearch) o);<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        }<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        LoggerFactory.getLogger(ExportDataSupport.class).error("Update @ obs");<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        ArrayList tmp = ((ListObservableSearch) o).getArray();<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        <a name="line.192"></a>
+<span class="sourceLineNo">193</span>        if (tmp==null)<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>            tmp = ((ListObservableSearch) obsAux).getArray();<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        <a name="line.197"></a>
+<span class="sourceLineNo">198</span>        if (tmp==null)<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            LoggerFactory.getLogger(ExportDataSupport.class).error("Update is null, sending block signal");<a name="line.200"></a>
+<span class="sourceLineNo">201</span>            PluginController.getInstance().addTask(new TaskRequest(TaskRequestsConstants.T_BLOCK_SIGNAL, null, null));<a name="line.201"></a>
+<span class="sourceLineNo">202</span>            return;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        }<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        <a name="line.204"></a>
+<span class="sourceLineNo">205</span>        boolean finish = ((ListObservableSearch) obsAux).isFinish();<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        LoggerFactory.getLogger(ExportDataSupport.class).error("Finished @ " + finish);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        if (finish)<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>            // only intended to notify the observers of the fist time<a name="line.209"></a>
+<span class="sourceLineNo">210</span>            if(this.countObservers() &gt; 0)<a name="line.210"></a>
+<span class="sourceLineNo">211</span>            {<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                this.setChanged();<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                this.notifyObservers((Boolean)finish);<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                obsAux = null;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                this.deleteObservers();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        }   <a name="line.217"></a>
+<span class="sourceLineNo">218</span>        <a name="line.218"></a>
+<span class="sourceLineNo">219</span>        if(tmp instanceof ArrayList) <a name="line.219"></a>
+<span class="sourceLineNo">220</span>        {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>            try<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                <a name="line.223"></a>
+<span class="sourceLineNo">224</span>                ArrayList&lt;SearchResult&gt; results = (ArrayList&lt;SearchResult&gt;) tmp;<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                if (results.isEmpty())<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                    PluginController.getInstance().addTask(new TaskRequest(TaskRequestsConstants.T_BLOCK_SIGNAL, null, null));<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                    return;<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                }<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                LoggerFactory.getLogger(ExportDataSupport.class).error("Print lines");<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                printLines(results);<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                PluginController.getInstance().addTask(new TaskRequest(TaskRequestsConstants.T_BLOCK_SIGNAL, null, null));<a name="line.232"></a>
+<span class="sourceLineNo">233</span><a name="line.233"></a>
+<span class="sourceLineNo">234</span>            } catch (Exception ex) <a name="line.234"></a>
+<span class="sourceLineNo">235</span>            {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                LoggerFactory.getLogger(ExportDataSupport.class).error(ex.getMessage(), ex);<a name="line.236"></a>
+<span class="sourceLineNo">237</span>            }<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        }<a name="line.238"></a>
+<span class="sourceLineNo">239</span>    }<a name="line.239"></a>
+<span class="sourceLineNo">240</span>}<a name="line.240"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

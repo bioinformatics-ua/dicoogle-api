@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This file is part of Dicoogle/dicoogle-sdk.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> *<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Dicoogle/dicoogle-sdk is free software: you can redistribute it and/or modify<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * it under the terms of the GNU General Public License as published by<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * the Free Software Foundation, either version 3 of the License, or<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * (at your option) any later version.<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Dicoogle/dicoogle-sdk is distributed in the hope that it will be useful,<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * but WITHOUT ANY WARRANTY; without even the implied warranty of<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * GNU General Public License for more details.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * You should have received a copy of the GNU General Public License<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * along with Dicoogle.  If not, see &lt;http://www.gnu.org/licenses/&gt;.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> */<a name="line.18"></a>
+<span class="sourceLineNo">019</span>package pt.ua.dicoogle.sdk;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.Collection;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.Collections;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>import net.xeoh.plugins.base.Plugin;<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.restlet.resource.ServerResource;<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>/**<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * This is the class responsible for creating a Dicoolge plugin.<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * The developer may use this interface in order to manage and expose the implemented plugins.<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * One instance of each installed plugin set is created by injecting it as a<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * {@link net.xeoh.plugins.base.annotations.PluginImplementation}. All instances are expected<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * to be thread safe. It is highly recommended that provided collections are immutable, and<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * that no modifications are performed in getter methods.<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * @author psytek<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * @author Luís A. Bastião Silva &lt;bastiao@ua.pt&gt;<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * @author Eduardo Pinho &lt;eduardopinho@ua.pt&gt;<a name="line.40"></a>
+<span class="sourceLineNo">041</span> */<a name="line.41"></a>
+<span class="sourceLineNo">042</span>public interface PluginSet extends Plugin {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    /**<a name="line.43"></a>
+<span class="sourceLineNo">044</span>     * Gets the plugin's name. This name will be used for identifying index/query/storage providers,<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     * and should be unique among the total plugin sets installed.<a name="line.45"></a>
+<span class="sourceLineNo">046</span>     * @return the name of the plugin, never changes<a name="line.46"></a>
+<span class="sourceLineNo">047</span>     */<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    public String getName();<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>    /**<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * Gets the indexer plugins enclosed in this plugin set.<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * This collection must be immutable.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * @return IndexPluginInterface returns a list of active index plugins<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * @see IndexerInterface<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     */<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    public default Collection&lt;? extends IndexerInterface&gt; getIndexPlugins() {<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        return Collections.EMPTY_LIST;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    }<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>    /**<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * Gets the query plugins enclosed in this plugin set.<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     * This collection must be immutable.<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * @return a collection of query plugins<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * @see QueryInterface<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     */<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    public default Collection&lt;? extends QueryInterface&gt; getQueryPlugins() {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        return Collections.EMPTY_LIST;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    }<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    <a name="line.69"></a>
+<span class="sourceLineNo">070</span>    /**<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     * Gets the storage plugins enclosed in this plugin set.<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * This collection must be immutable.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * @return Collection holding the StoragePlugins of this PluginSet<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     */<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    public default Collection&lt;? extends StorageInterface&gt; getStoragePlugins() {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        return Collections.EMPTY_LIST;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    }<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    <a name="line.78"></a>
+<span class="sourceLineNo">079</span>    /**<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * Obtains a collection of access to the RESTful resources. These plugins will be installed to<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * the web service hierarchy according to a name defined by the object's {@code toString()} method.<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * This collection must be immutable.<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     * @return a collection of Restlet-based server resources, implementing {@code toString()}<a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * to provide the resource name<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     */<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    public default Collection&lt;? extends ServerResource&gt; getRestPlugins() {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        return Collections.EMPTY_LIST;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>    }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    <a name="line.89"></a>
+<span class="sourceLineNo">090</span>    /**<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * Obtains a collection of Jetty plugins, so as to implement web services via Dicoogle.<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     * This collection must be immutable.<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * @return a collection of Jetty plugins to the core application<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * @see JettyPluginInterface<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     */<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    public default Collection&lt;? extends JettyPluginInterface&gt; getJettyPlugins() {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        return Collections.EMPTY_LIST;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>    <a name="line.99"></a>
+<span class="sourceLineNo">100</span>    /**<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * Defines the plugin's settings. This method will be called once after the plugin set was instantiated<a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * with plugin-scoped settings. Dicoogle users can modify these settings by accessing the XML file with<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * the same name in the "Settings" folder. Developers may define such settings programmatically from the<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * plugin itself.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * @param xmlSettings an XML-based configuration holder<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     */<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    public void setSettings(ConfigurationHolder xmlSettings);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>    <a name="line.108"></a>
+<span class="sourceLineNo">109</span>    /**<a name="line.109"></a>
+<span class="sourceLineNo">110</span>     * Retrieves the plugin's settings.<a name="line.110"></a>
+<span class="sourceLineNo">111</span>     * @return an XML-based configuration holder<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     */<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    public ConfigurationHolder getSettings();<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>    /**<a name="line.115"></a>
+<span class="sourceLineNo">116</span>     * Signals a plugin to stop. Upon an invocation of this method, the plugin may clean allocated resources<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     * and save state if required.<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     */<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    public default void shutdown() {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        // do nothing<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>}<a name="line.122"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
