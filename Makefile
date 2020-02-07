@@ -25,13 +25,11 @@ endif
 
 # The top level directory
 ROOT_DIR = $(shell pwd)
-DOCS_DIR = $(ROOT_DIR)/docs
 DICOOGLE_DIR = $(ROOT_DIR)/dicoogle
+DOCS_DIR = $(ROOT_DIR)/docs
 JAVADOC_DIR = $(DOCS_DIR)/javadoc
 WEBAPI_DIR = $(DOCS_DIR)/webapi
 
-# List of source files
-SOURCE_LIST = $(shell find $(DICOOGLE_DIR) -type f -name "*.java")
 
 # If target matches javadoc, get version. It not defined, generate LATEST
 ifeq (javadoc,$(firstword $(MAKECMDGOALS)))
@@ -48,34 +46,25 @@ all:
 
 javadoc:
 	if [ $(words $(MAKECMDGOALS)) -lt 2 ] ; then \
-        javadoc -Xdoclint:none -d $(JAVADOC_DIR) -linksource $(SOURCE_LIST) ;\
+        make v2.3.1 v2.4.0 v2.5.0 dev master;\
 	else \
-		make v$(DICOOGLE_TARGET) ;\
+		make v$(DICOOGLE_TARGET) ; \
 	fi
 
 v2.3.1:
-	cd $(DICOOGLE_DIR) && \
-	git fetch && git fetch --tags && \
-	git checkout 2.3.1 -f -B v2.3.1 && \
-	cd $(ROOT_DIR)
-
-	@echo 2.3.1
+	sh scripts/build_javadoc.sh -d 2.3.1 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.3.1
 
 v2.4.0:
-	cd $(DICOOGLE_DIR) && \
-	git fetch && git fetch --tags && \
-	git checkout 2.4.0 -f -B v2.4.0 && \
-	cd $(ROOT_DIR)
+	sh scripts/build_javadoc.sh -d 2.4.0 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.4.0
 
-	@echo 2.4.0
+v2.5.0: 
+	sh scripts/build_javadoc.sh -d 2.5.0 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.5.0
 
-v2.5.0:
-	cd $(DICOOGLE_DIR) && \
-	git fetch && git fetch --tags && \
-	git checkout 2.5.0 -f -B v2.5.0 && \
-	cd $(ROOT_DIR)
+dev:
+	sh scripts/build_javadoc.sh -d dev -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/dev
 
-	@echo 2.5.0
+master:
+	sh scripts/build_javadoc.sh -d master -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/master
 
 clean:
     # Remove all of the documentation
