@@ -48,7 +48,7 @@ cd $DICOOGLE_DIR
 git fetch && git fetch --tags
 git checkout $VERSION_TO_BUILD  -B v$VERSION_TO_BUILD
 SOURCE_LIST=`find $DICOOGLE_DIR -type f -name "*.java"`
-javadoc -Xdoclint:none -Xdoclint:-missing -quiet -d $JAVADOC_DIR -linksource $SOURCE_LIST
+javadoc -Xdoclint:none -Xdoclint:-missing -notimestamp -quiet -d $JAVADOC_DIR -linksource $SOURCE_LIST
 
 echo "Dicoogle v$VERSION_TO_BUILD available at $JAVADOC_DIR."
 
