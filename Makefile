@@ -91,4 +91,4 @@ webapi-vmaster:
 
 clean:
     # Remove all of the documentation
-	@if [ -d $(DOCS_DIR) ]; then rm -r $(DOCS_DIR); fi;
+	@if [ -d $(DOCS_DIR) ]; then rm -r $(JAVADOC_DIR)/*/; rm -r $(WEBAPI_DIR)/*/; fi;
