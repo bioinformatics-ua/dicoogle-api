@@ -10,3 +10,11 @@ header {
 a {
   color: #337ab7 !important;
 }
+
+.dropdown-item {
+  color: #515151 !important;
+}
+
+.dropdown-item:focus {
+  background-color: #f8f9fa;
+}
