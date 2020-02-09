@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- ICON -->
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <!-- BOOTSTRAP CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+    <!-- BOOTSTRAP SCRIPTS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+    <!-- FONTAWESOME -->
+    <script src="https://use.fontawesome.com/4b22e2b5fe.js"></script>
+
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" type="text/css" href="../styles/styles.css">
+
+    <!-- CUSTOM JS -->
+    <script src="../scripts/dropdown_webapi.js"></script>
+
+    <title>Dicoogle Web API</title>
+</head>
+
+<body>
+    <header class="navbar navbar-expand-lg navbar-light">
+        <a class=" navbar-brand" href="http://www.dicoogle.com" target="_blank">
+            <img src="../images/logo.png" alt="" height="35px">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Version
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a id="dev" class="dropdown-item" href="#">dev</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link p-2" href="https://github.com/bioinformatics-ua/dicoogle-api" target="_blank"
+                        rel="noopener" aria-label="GitHub">
+                        <i class="fa fa-github"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link p-2" href="https://twitter.com/IEETA_Research" target="_blank" rel="noopener"
+                        aria-label="Twitter">
+                        <i class="fa fa-twitter"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="h-100">
+        <iframe id="main-iframe" src=https://bioinformatics-ua.github.io/dicoogle-api/webapi/dev/ width="100%"
+            height="100%" frameBorder="0"></iframe>
+    </div>
+</body>
+
+</html>
