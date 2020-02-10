@@ -127,11 +127,21 @@ body {
   background-color: #337ab7;
 }
 
-.content h1:first-child,
-.content div:first-child + h1 {
-  font-weight: bold;
+.content h1 {
+  font-weight: 600;
+  font-style: italic;
+}
+
+.content h2 {
+  font-weight: bolder;
 }
 
 .content table th {
   font-weight: bolder;
+}
+
+#dicoogle {
+  font-size: large;
+  font-weight: 900;
+  font-style: normal;
 }
