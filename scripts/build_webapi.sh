@@ -54,7 +54,7 @@ if [ -f "$API_FILE" ]; then
   echo "Generating documentation files in ${WEBAPI_DIR}..."
   
   mkdir -p $WEBAPI_DIR
-  npx api2html -o $WEBAPI_DIR/index.html $DICOOGLE_DIR/dicoogle_web_api.yaml
+  npx api2html -c $WEBAPI_DIR/../../images/webapi/webapi_icon_dark.png -P $WEBAPI_DIR/../../styles/webapi.css -o $WEBAPI_DIR/index.html $DICOOGLE_DIR/dicoogle_web_api.yaml
 else
   echo "Error: ${API_FILE} not found. Cannot continue."
   exit 3
