@@ -83,10 +83,10 @@ javadoc-vmaster:
 
 
 webapi-vdev:
-	sh scripts/build_webapi.sh -d dev -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/dev
+	sh scripts/build_webapi.sh -d dev -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/dev -s $(DOCS_DIR)/static
 
 webapi-vmaster:
-	sh scripts/build_webapi.sh -d master -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/master
+	sh scripts/build_webapi.sh -d master -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/master -s $(DOCS_DIR)/static
 
 
 clean:
