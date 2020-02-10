@@ -1,0 +1,128 @@
+/*
+Copyright 2008-2013 Concur Technologies, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain
+a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+*/
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+html,
+body {
+  font-family: "Raleway", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 200;
+  line-height: 1.7857;
+  letter-spacing: 0.025em;
+  color: #333333;
+  background-color: #fff;
+}
+
+.toc-wrapper {
+  background-color: #cbe0f2;
+}
+
+.toc-wrapper .logo {
+  margin: auto;
+  width: 65%;
+}
+
+.toc-wrapper > .search input {
+  background: #cbe0f2;
+  color: #515151;
+}
+
+.toc-wrapper > .search:before {
+  color: #515151;
+}
+
+.toc-wrapper .search-results {
+  background: #337ab7;
+}
+
+.toc-wrapper .toc-link.active {
+  background-color: #286090;
+}
+
+.toc-wrapper .toc-link.active-parent {
+  background-color: #204d74;
+}
+
+.toc-wrapper .toc-list-h2 {
+  background-color: #337ab7;
+}
+
+.toc-wrapper .toc-h2 {
+  color: #fff;
+}
+
+.toc-wrapper .toc-footer li,
+.toc-wrapper .toc-footer a {
+  color: #515151;
+}
+
+.toc-link,
+.toc-footer li {
+  color: #515151;
+}
+
+.page-wrapper .dark-box {
+  background-color: #e3f2fd;
+}
+
+.page-wrapper .lang-selector {
+  font-size: 13px;
+  border-bottom: 5px solid #337ab7;
+}
+
+.lang-selector {
+  background-color: #286090;
+}
+
+.lang-selector a:active,
+.lang-selector a:hover,
+.lang-selector a:focus {
+  background-color: #337ab7;
+}
+
+.lang-selector a.active {
+  background-color: #337ab7;
+}
+
+.content hr {
+  border-top: 2px solid #cbe0f2;
+}
+
+.content pre,
+.content blockquote {
+  background-color: #e3f2fd;
+  color: #515151;
+}
+
+.content pre > p,
+.content blockquote > p {
+  font-size: 14px;
+}
+
+.content blockquote > p {
+  font-weight: bold;
+  background-color: #cbe0f2;
+  color: #515151;
+}
+
+.highlight,
+.highlight .w {
+  background-color: #337ab7;
+}
