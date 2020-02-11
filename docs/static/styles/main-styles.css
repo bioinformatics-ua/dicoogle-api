@@ -64,8 +64,8 @@ h6 {
   width: 100%;
   font-weight: bolder;
   font-size: 0.75rem;
-  background-color: #515151;
-  color: #f2f2f2;
+  background-color: #383838;
+  color: #8c8c8c;;
 }
 
 .footer h5 {
@@ -81,10 +81,11 @@ h6 {
 
 .footer h5 {
   margin-bottom: 2px;
+  color: white;
 }
 
 .footer a {
-  color: white;
+  color: #cccccc;
   font-weight: bold;
 }
 
@@ -95,6 +96,6 @@ h6 {
 }
 
 ul li a {
-  color: white;
+  color: #8c8c8c;;
   font-weight: bold;
 }
