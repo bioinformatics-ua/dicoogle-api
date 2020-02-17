@@ -44,6 +44,7 @@ if [[ ! $DICOOGLE_VERSIONS =~ (^|[[:space:]])"$VERSION_TO_BUILD"($|[[:space:]]) 
     echo >&1 "Error: Invalid Dicoogle version. Available versions:\n$DICOOGLE_VERSIONS"; exit 2;
 fi
 
+git submodule update --init --recursive
 cd $DICOOGLE_DIR
 git fetch && git fetch --tags
 git checkout $VERSION_TO_BUILD  -B v$VERSION_TO_BUILD
