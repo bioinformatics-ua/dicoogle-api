@@ -1,4 +1,4 @@
-# <img src="docs/static/images/webapi/webapi_full_dark.png" height="100"/>
+# <img src="https://user-images.githubusercontent.com/4738426/33545371-e652d482-d8d5-11e7-9ea5-c676d9313378.png" height="50"/>
 
 This repository contains the source code and generation scripts of the Dicoogle API website.
 
