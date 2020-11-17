@@ -108,7 +108,7 @@ paths:
         - dicoogle_auth:
             - user
   /user:
-    put:
+    post:
       tags:
         - User
       summary: Create a user in the system
