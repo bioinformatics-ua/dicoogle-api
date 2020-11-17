@@ -60,11 +60,7 @@ javadoc:
 	fi
 
 webapi:
-	if [ $(words $(MAKECMDGOALS)) -lt 2 ] ; then \
-        make webapi-vdev;\
-	else \
-		make webapi-v$(DICOOGLE_TARGET) ; \
-	fi
+	sh scripts/build_webapi.sh -o $(WEBAPI_DIR)/dev -s $(DOCS_DIR)/static
 
 javadoc-v2.3.1:
 	sh scripts/build_javadoc.sh -d 2.3.1 -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/v2.3.1
@@ -80,13 +76,6 @@ javadoc-vdev:
 
 javadoc-vmaster:
 	sh scripts/build_javadoc.sh -d master -i $(DICOOGLE_DIR) -o $(JAVADOC_DIR)/master
-
-
-webapi-vdev:
-	sh scripts/build_webapi.sh -d dev -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/dev -s $(DOCS_DIR)/static
-
-webapi-vmaster:
-	sh scripts/build_webapi.sh -d master -i $(DICOOGLE_DIR) -o $(WEBAPI_DIR)/master -s $(DOCS_DIR)/static
 
 
 clean:
